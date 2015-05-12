@@ -5,14 +5,15 @@ private class BZ_CampaignAssigned_TEST {
         Lead l = new Lead(OwnerId=UserInfo.getUserId(), User_Type__c='Volunteer', Account_Activated__c=true, LeadSource='Website Signup', FirstName='Someone', LastName='New', Company='Someone New (individual)', Status='Open');
         insert l;
         
+        // THis happens automatically now on lead insertion above.
         // Convert Lead to Contact to get everything setup properly (e.g. Lead.ConvertedContactId must be set).
-        Database.LeadConvert lc = new Database.LeadConvert();
+        /*Database.LeadConvert lc = new Database.LeadConvert();
         lc.setLeadId(l.id);
         LeadStatus convertStatus = [Select Id, MasterLabel FROM LeadStatus WHERE IsConverted=true LIMIT 1];
         lc.setConvertedStatus(convertStatus.MasterLabel);
-        Database.LeadConvertResult lcr = Database.convertLead(lc);        
-        
-        Contact contact = [SELECT Id FROM Contact WHERE Id = :lcr.contactId];
+        Database.LeadConvertResult lcr = Database.convertLead(lc); */    
+        Lead updatedLead = [SELECT Id, ConvertedContactId FROM Lead Where Id = :l.Id];
+        Contact contact = [SELECT Id FROM Contact WHERE Id = :updatedLead.ConvertedContactId];
         Contact campaignOwner = new Contact(FirstName='Test', LastName='CampaignOwner1', OwnerId=userInfo.getUserId());
         insert campaignOwner;
 
